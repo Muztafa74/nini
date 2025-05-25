@@ -49,41 +49,47 @@ export default function LoginForm() {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-rose-700 font-medium">
-                Who are you?
-              </Label>
+              <Label htmlFor="username" className="text-rose-700">Username</Label>
               <Input
                 id="username"
                 type="text"
-                placeholder="Dad or Mom"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                required
+                placeholder="Enter your username"
                 className="border-rose-200 focus:border-rose-400 focus:ring-rose-400"
+                required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-rose-700 font-medium">
-                Family Password
-              </Label>
+              <Label htmlFor="password" className="text-rose-700">Password</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
+                placeholder="Enter your password"
                 className="border-rose-200 focus:border-rose-400 focus:ring-rose-400"
+                required
               />
             </div>
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-rose-400 to-pink-400 hover:from-rose-500 hover:to-pink-500 text-white font-medium py-2.5"
+              className="w-full bg-gradient-to-r from-rose-400 to-pink-400 hover:from-rose-500 hover:to-pink-500 text-white"
               disabled={loading}
             >
-              {loading ? 'Logging in...' : 'Enter Our Family Space 💖'}
+              {loading ? (
+                <>
+                  <Heart className="w-4 h-4 animate-pulse" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <Heart className="w-4 h-4" />
+                  Sign In
+                </>
+              )}
             </Button>
           </form>
         </CardContent>
