@@ -32,7 +32,7 @@ export default function Dashboard() {
             url
           )
         `)
-        .order('created_at', { ascending: false })
+        .order('date', { ascending: false })
 
       if (foldersError) throw foldersError
 
@@ -95,7 +95,7 @@ export default function Dashboard() {
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-rose-100 fixed top-0 left-0 right-0 z-50 px-4 py-3">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-rose-400 to-pink-400 rounded-full flex items-center justify-center">
                 <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-white fill-current" />
@@ -107,19 +107,18 @@ export default function Dashboard() {
                 <p className="text-xs sm:text-sm text-rose-600/70">Our Memory Collection</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <Badge variant="secondary" className="bg-rose-100 text-rose-700 border-rose-200 text-xs sm:text-sm">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="bg-rose-100 text-rose-700 border-rose-200 text-xs">
                 <User className="w-3 h-3 mr-1" />
                 {user?.username}
               </Badge>
               <Button
-                variant="outline"
-                size="sm"
+                variant="ghost"
+                size="icon"
                 onClick={logout}
-                className="border-rose-200 text-rose-600 hover:bg-rose-50 text-xs sm:text-sm h-8 sm:h-9"
+                className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
               >
-                <LogOut className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                Logout
+                <LogOut className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -153,7 +152,7 @@ export default function Dashboard() {
             <CreateFolderDialog onFolderCreated={fetchFolders} />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {folders.map((folder) => (
               <Card
                 key={folder.id}
