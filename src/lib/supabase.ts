@@ -9,8 +9,11 @@ export interface Folder {
   id: string
   name: string
   date: string
-  created_by: 'Dad' | 'Mom'
+  created_by: string
   created_at: string
+  updated_by?: string
+  updated_at?: string
+  cover_photo_url?: string
 }
 
 export interface Photo {

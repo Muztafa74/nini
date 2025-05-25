@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/lib/auth'
 import { supabase, type Folder, type Photo, type Note } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
@@ -42,11 +42,7 @@ export default function FolderDetail({ folder, onBack, onFolderDeleted }: Folder
   const [folderName, setFolderName] = useState(folder.name)
   const [folderDate, setFolderDate] = useState(folder.date)
 
-  useEffect(() => {
-    fetchFolderData()
-  }, [])
-
-  const fetchFolderData = async () => {
+  const fetchFolderData = useCallback(async () => {
     try {
       // Fetch photos
       const { data: photosData, error: photosError } = await supabase
@@ -74,7 +70,11 @@ export default function FolderDetail({ folder, onBack, onFolderDeleted }: Folder
     } finally {
       setLoading(false)
     }
-  }
+  }, [folder.id])
+
+  useEffect(() => {
+    fetchFolderData()
+  }, [fetchFolderData])
 
   const saveNotes = async () => {
     if (!user) return
