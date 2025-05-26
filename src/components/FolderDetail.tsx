@@ -601,7 +601,7 @@ export default function FolderDetail({ folder, onBack, onFolderDeleted }: Folder
               </div>
             </div>
           ))}
-          <PhotoUpload folderId={folder.id} onUploadComplete={fetchFolderData} />
+          <PhotoUpload folderId={folder.id} onPhotoUploaded={fetchFolderData} />
         </div>
 
         {/* Notes Section */}
