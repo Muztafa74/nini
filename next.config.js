@@ -37,14 +37,11 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-  },
-  // Enable static exports
-  trailingSlash: true,
-  // Disable server-side image optimization
-  images: {
     loader: 'custom',
     loaderFile: './image-loader.js',
   },
+  // Enable static exports
+  trailingSlash: true,
 };
 
 module.exports = nextConfig;
