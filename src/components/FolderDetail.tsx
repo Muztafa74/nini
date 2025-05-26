@@ -234,11 +234,15 @@ export default function FolderDetail({ folder, onBack, onFolderDeleted }: Folder
     const confirmed = window.confirm('Are you sure you want to delete this note? This cannot be undone.')
     if (!confirmed) return
 
+    // Get note to delete before any operations
+    const noteToDelete = notes.find(note => note.id === noteId)
+    if (!noteToDelete) {
+      toast.error('Note not found')
+      return
+    }
+
     try {
       // Optimistic update
-      const noteToDelete = notes.find(note => note.id === noteId)
-      if (!noteToDelete) throw new Error('Note not found')
-
       setNotes(notes.filter(note => note.id !== noteId))
 
       // Try to delete from database with retry
@@ -271,9 +275,7 @@ export default function FolderDetail({ folder, onBack, onFolderDeleted }: Folder
       toast.success('Note deleted.')
     } catch (error) {
       // Rollback optimistic update
-      if (noteToDelete) {
-        setNotes([...notes, noteToDelete])
-      }
+      setNotes([...notes, noteToDelete])
       console.error('Error deleting note:', error)
       toast.error('Unable to delete note. Please try again.')
     }
