@@ -37,11 +37,19 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-    loader: 'custom',
-    loaderFile: './image-loader.js',
   },
   // Enable static exports
   trailingSlash: true,
+  // Disable server-side image optimization
+  images: {
+    loader: 'custom',
+    loaderFile: './image-loader.js',
+  },
+  // Add experimental features for better performance
+  experimental: {
+    optimizeCss: true,
+    scrollRestoration: true,
+  },
 };
 
 module.exports = nextConfig;
