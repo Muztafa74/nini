@@ -59,7 +59,7 @@ export default function FolderDetail({ folder, onBack, onFolderDeleted }: Folder
         .from('photos')
         .select('*')
         .eq('folder_id', folder.id)
-        .order('uploaded_at', { ascending: true })
+        .order('uploaded_at', { ascending: false })
 
       if (photosError) throw photosError
       setPhotos(photosData || [])
@@ -112,7 +112,7 @@ export default function FolderDetail({ folder, onBack, onFolderDeleted }: Folder
       // Try to save to database with retry
       let retries = 3
       let success = false
-      let data
+      let data: Note
 
       while (retries > 0 && !success) {
         try {

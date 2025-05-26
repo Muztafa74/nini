@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { Photo } from '@/lib/supabase'
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { X, ChevronLeft, ChevronRight, User } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, User, Loader2 } from 'lucide-react'
 
 interface PhotoLightboxProps {
   photos: Photo[]
@@ -20,6 +20,8 @@ interface PhotoLightboxProps {
 
 export default function PhotoLightbox({ photos, initialIndex, isOpen, onClose }: PhotoLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
+  const [isLoading, setIsLoading] = useState(true)
+  const [touchStart, setTouchStart] = useState<number | null>(null)
 
   // Update currentIndex when initialIndex changes
   useEffect(() => {
@@ -28,12 +30,59 @@ export default function PhotoLightbox({ photos, initialIndex, isOpen, onClose }:
 
   const currentPhoto = photos[currentIndex]
 
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1))
+    setIsLoading(true)
+  }, [photos.length])
+
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0))
+    setIsLoading(true)
+  }, [photos.length])
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return
+      
+      switch (e.key) {
+        case 'ArrowLeft':
+          goToPrevious()
+          break
+        case 'ArrowRight':
+          goToNext()
+          break
+        case 'Escape':
+          onClose()
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, goToPrevious, goToNext, onClose])
+
+  // Handle touch events
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.touches[0].clientX)
   }
 
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0))
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart) return
+
+    const touchEnd = e.changedTouches[0].clientX
+    const diff = touchStart - touchEnd
+
+    // Require a minimum swipe distance
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        goToNext()
+      } else {
+        goToPrevious()
+      }
+    }
+
+    setTouchStart(null)
   }
 
   const formatDate = (dateString: string) => {
@@ -61,14 +110,24 @@ export default function PhotoLightbox({ photos, initialIndex, isOpen, onClose }:
             size="icon"
             onClick={onClose}
             className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50 text-white hover:bg-white/10"
+            aria-label="Close photo viewer"
           >
             <X className="h-6 w-6" />
           </Button>
 
           {/* Photo */}
-          <div className="flex-1 relative flex items-center justify-center p-2 sm:p-4 overflow-hidden">
+          <div 
+            className="flex-1 relative flex items-center justify-center p-2 sm:p-4 overflow-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             {currentPhoto && (
               <div className="relative w-full h-full flex items-center justify-center">
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="h-8 w-8 text-white animate-spin" />
+                  </div>
+                )}
                 <img
                   src={currentPhoto.url}
                   alt={`Photo by ${currentPhoto.uploaded_by} from ${formatDate(currentPhoto.uploaded_at)}`}
@@ -78,6 +137,8 @@ export default function PhotoLightbox({ photos, initialIndex, isOpen, onClose }:
                     maxWidth: 'calc(100vw - 100px)',
                     objectFit: 'contain'
                   }}
+                  onLoad={() => setIsLoading(false)}
+                  onError={() => setIsLoading(false)}
                 />
               </div>
             )}

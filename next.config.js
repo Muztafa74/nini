@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   images: {
     unoptimized: true,
     domains: [
@@ -7,6 +8,7 @@ const nextConfig = {
       "images.unsplash.com",
       "ext.same-assets.com",
       "ugc.same-assets.com",
+      "*.supabase.co",
     ],
     remotePatterns: [
       {
@@ -29,7 +31,19 @@ const nextConfig = {
         hostname: "ugc.same-assets.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/**",
+      },
     ],
+  },
+  // Enable static exports
+  trailingSlash: true,
+  // Disable server-side image optimization
+  images: {
+    loader: 'custom',
+    loaderFile: './image-loader.js',
   },
 };
 
