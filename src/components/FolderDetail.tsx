@@ -170,11 +170,15 @@ export default function FolderDetail({ folder, onBack, onFolderDeleted }: Folder
       updated_at: new Date().toISOString()
     }
 
+    // Get original note before any updates
+    const originalNote = notes.find(note => note.id === noteId)
+    if (!originalNote) {
+      toast.error('Note not found')
+      return
+    }
+
     try {
       // Optimistic update
-      const originalNote = notes.find(note => note.id === noteId)
-      if (!originalNote) throw new Error('Note not found')
-
       setNotes(notes.map(note => 
         note.id === noteId 
           ? { ...note, ...noteUpdate }
